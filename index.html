@@ -2,8 +2,9 @@
 <html>
 
 <head>
-  <title>My SDR Website</title>
+  <title>Armis</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="icon" type="image/png" href="./assets/newLogo.png">
 </head>
 
 <body style="margin:0">
@@ -31,7 +32,7 @@
       );
       // custom data points start
 
-      const REPO = "truffleconvivademo"; // must match your repo
+      const REPO = "armistrufflesdrdemo"; // must match your repo
 
       // Map UI language -> Salesforce-supported language
       const ESW_LANG_MAP = { en: "en_US", fr: "fr", de: "de" };
@@ -181,7 +182,7 @@
             const fields = buildPrechatFields();
             const preChatFields = {"Conversation_Detail": JSON.stringify(fields)}
             console.log("📨 Prechat fields sent:", preChatFields);
-            embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields(fields);
+            embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields(preChatFields);
           }
         } catch (e) {
           console.warn("Prechat push failed:", e);
