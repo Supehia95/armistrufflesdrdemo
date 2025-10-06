@@ -165,7 +165,7 @@
           UTM_Campaign: context.utm_campaign,
           UTM_Term: context.utm_term,
           UTM_Content: context.utm_content,
-          Session_ID: context.sessionId,*/
+          Session_ID: context.sessionId,
           First_Seen_At: context.firstSeen,
           Last_Seen_At: context.lastSeen,
           IP_Address: context.ipAddress,
@@ -173,7 +173,7 @@
           Country_Code: context.geo?.countryCode,
           Region: context.geo?.region,
           City: context.geo?.city,
-          Timezone: context.geo?.timezone,
+          Timezone: context.geo?.timezone,*/
         });
       }
       function pushPrechatFields() {
@@ -181,6 +181,7 @@
           if (window.embeddedservice_bootstrap?.prechatAPI?.setHiddenPrechatFields) {
             const fields = buildPrechatFields();
             const preChatFields = {"Conversation_Detail": JSON.stringify(fields)}
+            console.log("📨 Prechat fields sent:", fields);
             console.log("📨 Prechat fields sent:", preChatFields);
             embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields(preChatFields);
           }
