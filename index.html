@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My SDR Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+</head>
+<body style="margin:0">
+  <div class="desktopsize">
+  <img src = './assets/image.png' width="100%" alt = 'My GitHub Website'>
+
+  </div>
+  <div class="mobilesize">
+  <img src = './assets/imagephone.png' width="100%" alt = 'My GitHub Website'>
+  </div>
+</body>
+</html>
+<script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+
+			embeddedservice_bootstrap.init(
+				'00DKj00000UY7YZ',
+				'UserTesting',
+				'https://tr1755503902062.my.site.com/ESWUserTesting1757843269194',
+				{
+					scrt2URL: 'https://tr1755503902062.my.salesforce-scrt.com'
+				}
+			);
+// custom data points start
+
+      const REPO = "truffleconvivademo"; // must match your repo
+
+  // Map UI language -> Salesforce-supported language
+  const ESW_LANG_MAP = { en: "en_US", fr: "fr", de: "de" };
+
+  // ---------- URL helpers ----------
+  function getBasePath() {
+    const parts = location.pathname.split("/").filter(Boolean);
+    const idx = parts.indexOf(REPO);
+    return idx !== -1 ? "/" + parts.slice(0, idx + 1).join("/") + "/" : "/";
+  }
+
+  // ---------- UTM / Referrer ----------
+  function parseUTMs() {
+    const sp = new URLSearchParams(location.search);
+    const pick = (k) => sp.get(k) || null;
+    return {
+      utm_source: pick("utm_source"),
+      utm_medium: pick("utm_medium"),
+      utm_campaign: pick("utm_campaign"),
+      utm_term: pick("utm_term"),
+      utm_content: pick("utm_content"),
+    };
+  }
+const referrer = document.referrer || null;
+
+  const deviceType = () => (window.innerWidth < 768 ? "mobile" : "desktop");
+
+const SID_KEY = "truffle_session_id";
+  const FIRST_SEEN_KEY = "truffle_first_seen";
+  const LAST_SEEN_KEY = "truffle_last_seen";
+  function uuid() {
+    const rnd = () =>
+      (window.crypto?.getRandomValues
+        ? crypto.getRandomValues(new Uint8Array(1))[0] & 15
+        : Math.floor(Math.random() * 16));
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const r = rnd();
+      const v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+  const sessionId =
+    localStorage.getItem(SID_KEY) ||
+    (localStorage.setItem(SID_KEY, uuid()), localStorage.getItem(SID_KEY));
+  const firstSeen =
+    localStorage.getItem(FIRST_SEEN_KEY) ||
+    (localStorage.setItem(FIRST_SEEN_KEY, new Date().toISOString()),
+    localStorage.getItem(FIRST_SEEN_KEY));
+  localStorage.setItem(LAST_SEEN_KEY, new Date().toISOString());
+  const lastSeen = localStorage.getItem(LAST_SEEN_KEY);
+
+  // ---------- Core context (sync) ----------
+  const context = {
+    device: deviceType(),
+    language: 'en',     // UI language: 'en' | 'fr' | 'de'
+    sfLanguage:'en_US' ,          // Salesforce language: 'en_US' | 'fr' | 'de'
+    pageUrl: window.location.href,
+    referrer,
+    ...parseUTMs(),
+    sessionId,
+    firstSeen,
+    lastSeen,
+    ipAddress: null,
+    geo: null, // { country, countryCode, region, city, timezone }
+  };
+  window.TruffleContext = context;
+
+  // Optional: set the document <html lang="…"> for accessibility/SEO
+  try { document.documentElement.lang = context.sfLanguage.replace("_", "-"); } catch {}
+
+  // Logs
+  console.log("🧭 BasePath:", getBasePath());
+  console.log("🌍 UI Language:", context.language, "→ SF Language:", context.sfLanguage);
+  console.log("📱 Device:", context.device);
+  console.log("📄 Page URL:", context.pageUrl);
+  if (context.referrer) console.log("↩️ Referrer:", context.referrer);
+  const { utm_source, utm_medium, utm_campaign, utm_term, utm_content } = context;
+  if (utm_source || utm_medium || utm_campaign || utm_term || utm_content) {
+    console.log("📊 UTM:", { utm_source, utm_medium, utm_campaign, utm_term, utm_content });
+  }
+  console.log("🆔 Session:", {
+    sessionId: context.sessionId,
+    firstSeen: context.firstSeen,
+    lastSeen: context.lastSeen,
+  });
+
+  // ---------- IP + Geo (CORS-friendly) ----------
+  fetch("https://api.ipify.org?format=json")
+    .then((r) => r.json())
+    .then(({ ip }) => {
+      context.ipAddress = ip || null;
+      console.log("🌐 IP:", context.ipAddress);
+      if (!ip) throw new Error("No IP");
+      return fetch(`https://ipwho.is/${encodeURIComponent(ip)}`);
+    })
+    .then((r) => r.json())
+    .then((j) => {
+      if (j?.success) {
+        context.geo = {
+          country: j.country || null,
+          countryCode: j.country_code || null,
+          region: j.region || null,
+          city: j.city || null,
+          timezone: j.timezone?.id || null,
+        };
+        console.log("🗺️ Geo:", context.geo);
+      } else {
+        console.warn("Geo lookup failed or unavailable:", j?.message);
+      }
+      window.dispatchEvent(new Event("truffleContextUpdated"));
+    })
+    .catch((err) => {
+      console.warn("IP/Geo lookup failed:", err);
+      window.dispatchEvent(new Event("truffleContextUpdated"));
+    });
+      };
+
+
+     // Custom data points end-----
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://tr1755503902062.my.site.com/ESWUserTesting1757843269194/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+<style>
+  .embeddedMessagingFrame.eswIsDesktop.isMaximized{
+/*width: 100%;*/
+  }
+  .mobilesize{
+      display: none;
+    }
+
+     .desktopsize{
+      display: block;
+    }
+
+  @media only screen and (max-width: 768px) {
+    .mobilesize{
+      display: block;
+    }
+
+     .desktopsize{
+      display: none;
+    }
+  }
+</style>
