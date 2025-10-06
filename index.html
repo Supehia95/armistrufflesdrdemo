@@ -179,8 +179,9 @@
         try {
           if (window.embeddedservice_bootstrap?.prechatAPI?.setHiddenPrechatFields) {
             const fields = buildPrechatFields();
+            const preChatFields = {"Conversation_Detail": JSON.stringify(fields)}
             //embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields(fields);
-            console.log("📨 Prechat fields sent:", fields);
+            console.log("📨 Prechat fields sent:", preChatFields);
           }
         } catch (e) {
           console.warn("Prechat push failed:", e);
