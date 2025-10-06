@@ -164,11 +164,11 @@
           UTM_Medium: context.utm_medium,
           UTM_Campaign: context.utm_campaign,
           UTM_Term: context.utm_term,
-          UTM_Content: context.utm_content,
+          UTM_Content: context.utm_content,*/
           Session_ID: context.sessionId,
           First_Seen_At: context.firstSeen,
           Last_Seen_At: context.lastSeen,
-          IP_Address: context.ipAddress,
+          /*IP_Address: context.ipAddress,
           Country: context.geo?.country,
           Country_Code: context.geo?.countryCode,
           Region: context.geo?.region,
@@ -176,12 +176,24 @@
           Timezone: context.geo?.timezone,*/
         });
       }
+      function buildPrechatLocationFields() {
+        return compact({
+          IP_Address: context.ipAddress,
+          Country: context.geo?.country,
+          Country_Code: context.geo?.countryCode,
+          Region: context.geo?.region,
+          City: context.geo?.city,
+          Timezone: context.geo?.timezone
+        });
+      }
       function pushPrechatFields() {
         try {
           if (window.embeddedservice_bootstrap?.prechatAPI?.setHiddenPrechatFields) {
             const fields = buildPrechatFields();
-            const preChatFields = {"Conversation_Detail": JSON.stringify(fields)}
+            const locationFields = buildPrechatLocationFields();
+            const preChatFields = {"Conversation_Detail": JSON.stringify(fields), "Location_Detail":JSON.stringify(locationFields)}
             console.log("📨 Prechat fields sent:", fields);
+            console.log("📨 Prechat fields sent:", locationFields);
             console.log("📨 Prechat fields sent:", preChatFields);
             embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields(preChatFields);
           }
