@@ -21,7 +21,6 @@
   function initEmbeddedMessaging() {
     try {
       embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
-
       embeddedservice_bootstrap.init(
         '00DKj00000UY7YZ',
         'Armis',
@@ -30,24 +29,6 @@
           scrt2URL: 'https://tr1755503902062.my.salesforce-scrt.com'
         }
       );
-    } catch (err) {
-      console.error('Error loading Embedded Messaging: ', err);
-    }
-  };
-
-
-  function initEmbeddedMessaging() {
-    try {
-      embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
-
-      embeddedservice_bootstrap.init(
-				'00DKj00000UY7YZ',
-				'Armis',
-				'https://tr1755503902062.my.site.com/ESWArmis1759755654049',
-				{
-					scrt2URL: 'https://tr1755503902062.my.salesforce-scrt.com'
-				}
-			);
       // custom data points start
 
       const REPO = "truffleconvivademo"; // must match your repo
@@ -117,10 +98,8 @@
         geo: null, // { country, countryCode, region, city, timezone }
       };
       window.TruffleContext = context;
-
       // Optional: set the document <html lang="…"> for accessibility/SEO
       try { document.documentElement.lang = context.sfLanguage.replace("_", "-"); } catch { }
-
       // Logs
       console.log("🧭 BasePath:", getBasePath());
       console.log("🌍 UI Language:", context.language, "→ SF Language:", context.sfLanguage);
@@ -136,7 +115,6 @@
         firstSeen: context.firstSeen,
         lastSeen: context.lastSeen,
       });
-
       // ---------- IP + Geo (CORS-friendly) ----------
       fetch("https://api.ipify.org?format=json")
         .then((r) => r.json())
@@ -167,11 +145,55 @@
           window.dispatchEvent(new Event("truffleContextUpdated"));
         });
       // Custom data points end-----
+      function compact(obj) {
+        const out = {};
+        Object.keys(obj || {}).forEach((k) => {
+          const v = obj[k];
+          if (v !== null && v !== undefined && String(v).trim() !== "") out[k] = v;
+        });
+        return out;
+      }
+      function buildPrechatFields() {
+        return compact({
+          Device: context.device,
+          Site_Language: context.sfLanguage, // ensure Salesforce receives 'en_US'
+          Page_URL: context.pageUrl,
+          Referrer_URL: context.referrer,
+          UTM_Source: context.utm_source,
+          UTM_Medium: context.utm_medium,
+          UTM_Campaign: context.utm_campaign,
+          UTM_Term: context.utm_term,
+          UTM_Content: context.utm_content,
+          Session_ID: context.sessionId,
+          First_Seen_At: context.firstSeen,
+          Last_Seen_At: context.lastSeen,
+          IP_Address: context.ipAddress,
+          Country: context.geo?.country,
+          Country_Code: context.geo?.countryCode,
+          Region: context.geo?.region,
+          City: context.geo?.city,
+          Timezone: context.geo?.timezone,
+        });
+      }
+      function pushPrechatFields() {
+        try {
+          if (window.embeddedservice_bootstrap?.prechatAPI?.setHiddenPrechatFields) {
+            const fields = buildPrechatFields();
+            //embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields(fields);
+            console.log("📨 Prechat fields sent:", fields);
+          }
+        } catch (e) {
+          console.warn("Prechat push failed:", e);
+        }
+      }
+      window.addEventListener("onEmbeddedMessagingReady", () => {
+        console.log("✅ onEmbeddedMessagingReady");
+        pushPrechatFields();
+      });
     } catch (err) {
       console.error('Error loading Embedded Messaging: ', err);
     }
   };
-
 </script>
 <script type='text/javascript'
   src='https://tr1755503902062.my.site.com/ESWArmis1759755654049/assets/js/bootstrap.min.js'
