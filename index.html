@@ -19,17 +19,18 @@
 
 </html>
 <script type='text/javascript'>
+<script type='text/javascript'>
   function initEmbeddedMessaging() {
     try {
       embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
       embeddedservice_bootstrap.init(
-        '00DKj00000UY7YZ',
-        'Armis',
-        'https://tr1755503902062.my.site.com/ESWArmis1759755654049',
-        {
-          scrt2URL: 'https://tr1755503902062.my.salesforce-scrt.com'
-        }
-      );
+				'00DKY00000IPwqR',
+				'Armis_Channel',
+				'https://tr1756279625627.my.site.com/ESWArmisChannel1759838087441',
+				{
+					scrt2URL: 'https://tr1756279625627.my.salesforce-scrt.com'
+				}
+			);
       // custom data points start
 
       const REPO = "armistrufflesdrdemo"; // must match your repo
@@ -210,10 +211,8 @@
     }
   };
 </script>
-<script type='text/javascript'
-  src='https://tr1755503902062.my.site.com/ESWArmis1759755654049/assets/js/bootstrap.min.js'
-  onload='initEmbeddedMessaging()'></script>
-<style>
+</script>
+<script type='text/javascript' src='https://tr1756279625627.my.site.com/ESWArmisChannel1759838087441/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
   .embeddedMessagingFrame.eswIsDesktop.isMaximized {
     /*width: 100%;*/
   }
